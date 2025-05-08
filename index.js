@@ -1,18 +1,22 @@
 const express = require('express');
+const mongoose = require('mongoose');
+require('dotenv').config(); // Load environment variables
+
 const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
-
-const MongoDBURL = "mongodb+srv://Smithese:Priscy123@cluster0.vggdodz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-const mongoose = require('mongoose');
+const MongoDBURL = process.env.MONGODB_URL; // Get MongoDB URL from environment variables
 
 const Item = require('./itemModel.js');
-mongoose.connect(MongoDBURL).then(()=>{
-    console.log("Connected to MongoDB");
-    
-})
 
+mongoose.connect(MongoDBURL)
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch(err => {
+    console.error("MongoDB connection error:", err);
+  });
 
 app.post("/create-item", async(req,res)=>{
 const {itemName, description, locationFound, dateFound,claimed} = req.body;
@@ -142,4 +146,4 @@ app.delete("/delete-item/:id", async (req, res) => {
 
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
-})  
+})
